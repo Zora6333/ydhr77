@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import JSONUploadForm
-from .ydhr77.models import JSONData
+from .models import JSONData
 import json
 
 def upload_json(request):
