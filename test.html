@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Загрузка JSON Georgei Shevchenko</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      input[type="file"] {
+        margin-bottom: 10px;
+      }
+      #error-msg {
+        color: red;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Загрузка JSON файла</h2>
+      <input type="file" id="jsonFile" accept=".json" />
+      <div id="error-msg"></div>
+      <button onclick="handleUpload()">Загрузить</button>
+    </div>
+
+    <script>
+      function handleUpload() {
+        const fileInput = document.getElementById("jsonFile");
+        const errorMessage = document.getElementById("error-msg");
+        const file = fileInput.files[0];
+
+        if (!file) {
+          errorMessage.textContent = "Пожалуйста, выберите файл.";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          try {
+            const jsonData = JSON.parse(event.target.result);
+            validateJSON(jsonData);
+          } catch (error) {
+            errorMessage.textContent = "Неверный JSON файл.";
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function validateJSON(data) {
+        const errorMessage = document.getElementById("error-msg");
+        for (let i = 0; i < data.length; i++) {
+          const item = data[i];
+          if (
+            !item.name ||
+            !item.date ||
+            typeof item.name !== "string" ||
+            typeof item.date !== "string"
+          ) {
+            errorMessage.textContent = "Неверный формат данных.";
+            return;
+          }
+          if (item.name.length >= 50) {
+            errorMessage.textContent = "Имя должно быть менее 50 символов.";
+            return;
+          }
+          const dateRegex = /^\d{4}-\d{2}-\d{2}_\d{2}:\d{2}$/;
+          if (!dateRegex.test(item.date)) {
+            errorMessage.textContent = "Неверный формат даты.";
+            return;
+          }
+        }
+        errorMessage.textContent = "";
+        console.log("Правильные данные JSON:", data);
+      }
+    </script>
+  </body>
+</html>
